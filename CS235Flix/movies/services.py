@@ -26,7 +26,7 @@ def add_review(movie_id: int, review_text: str, rating: int, username: str, repo
     if user is None:
         raise UnknownUserException
 
-    review = Review(movie, review_text, rating)
+    review = Review(movie, review_text, rating, user)
     user.add_review(review)
 
     # update the repository

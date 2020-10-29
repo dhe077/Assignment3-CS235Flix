@@ -6,6 +6,7 @@ from CS235Flix.domainmodel.director import Director
 class Movie:
 
     def __init__(self, movie_name: str, year: int, id: int):
+        from CS235Flix.domainmodel.review import Review
         if movie_name == "" or type(movie_name) is not str:
             self.__title = None
         else:
@@ -26,6 +27,7 @@ class Movie:
         self.__metascores = None
 
         self.__ID: int = id
+        self.__reviews = list()
 
     # property mechanism of title, description, director, actors, genres,
     # runtime, external_rating, revenue and metascores
@@ -107,7 +109,7 @@ class Movie:
 
     @revenue.setter
     def revenue(self, new_revenue: float):
-        if new_revenue != "N/A":
+        if new_revenue is not None and new_revenue != "N/A":
             if float(new_revenue) >= 0:
                 self.__revenue = float(new_revenue)
 
@@ -117,7 +119,7 @@ class Movie:
 
     @metascores.setter
     def metascores(self, new_metascores: int):
-        if new_metascores != "N/A":
+        if new_metascores is not None and new_metascores != "N/A":
             if int(new_metascores) >= 0:
                 self.__metascores = int(new_metascores)
 
@@ -166,8 +168,12 @@ class Movie:
     def add_genre(self, genre: Genre):
         if genre not in self.__genres:
             self.__genres.append(genre)
+            genre.add_related_movie(self)
 
     # extension method
     def add_rating_vote(self, rating: int):
         self.__rating_votes += 1
         self.__external_rating = (self.external_rating * (self.rating_votes - 1) + rating) / self.rating_votes
+
+    def add_review(self, review):
+        self.__reviews.append(review)

@@ -75,7 +75,7 @@ class SqlAlchemyRepository(AbstractRepository):
     def get_user(self, username) -> User:
         user = None
         try:
-            user = self._session_cm.session.query(User).filter_by(user_name=username).one()
+            user = self._session_cm.session.query(User).filter_by(_User__user_name=username).one()
         except NoResultFound:
             # Ignore any exception and return None.
             pass
@@ -90,7 +90,7 @@ class SqlAlchemyRepository(AbstractRepository):
     def get_movie(self, id: int) -> Movie:
         movie = None
         try:
-            movie = self._session_cm.session.query(Movie).filter(Movie.ID == id).one()
+            movie = self._session_cm.session.query(Movie).filter(Movie._Movie__ID == id).one()
         except NoResultFound:
             # Ignore any exception and return None.
             pass
@@ -103,7 +103,7 @@ class SqlAlchemyRepository(AbstractRepository):
             return movies
         else:
             # Return movies matching target_date; return an empty list if there are no matches.
-            movies = self._session_cm.session.query(Movie).filter(Movie.release_year == target_year).all()
+            movies = self._session_cm.session.query(Movie).filter(Movie._Movie__release_year == target_year).all()
             return movies
 
     def get_number_of_movies(self):
@@ -119,7 +119,7 @@ class SqlAlchemyRepository(AbstractRepository):
         return movie
 
     def get_movies_by_id(self, id_list):
-        movies = self._session_cm.session.query(Movie).filter(Movie.ID.in_(id_list)).all()
+        movies = self._session_cm.session.query(Movie).filter(Movie._Movie__ID.in_(id_list)).all()
         return movies
 
     def get_movie_ids_for_genre(self, genre_name: str):
@@ -127,7 +127,7 @@ class SqlAlchemyRepository(AbstractRepository):
 
         # Use native SQL to retrieve movie ids, since there is no mapped class for the movie_genres table.
         row = self._session_cm.session.execute('SELECT id FROM genres WHERE genre_name = :genre_name',
-                                               {'genre_name': genre_name}).fetchone()
+                                               {'_Genre__genre_name': genre_name}).fetchone()
 
         if row is None:
             # No genre with the name genre_name - create an empty list.
@@ -164,8 +164,8 @@ class SqlAlchemyRepository(AbstractRepository):
 
     def get_year_of_previous_movie(self, movie: Movie):
         result = None
-        prev = self._session_cm.session.query(Movie).filter(Movie.release_year < movie.release_year).order_by(
-            desc(Movie.release_year)).first()
+        prev = self._session_cm.session.query(Movie).filter(Movie._Movie__release_year < movie._Movie__release_year).order_by(
+            desc(Movie._Movie__release_year)).first()
 
         if prev is not None:
             result = prev.release_year
@@ -174,8 +174,8 @@ class SqlAlchemyRepository(AbstractRepository):
 
     def get_year_of_next_movie(self, movie: Movie):
         result = None
-        next = self._session_cm.session.query(Movie).filter(Movie.release_year > movie.release_year).order_by(
-            asc(Movie.release_year)).first()
+        next = self._session_cm.session.query(Movie).filter(Movie._Movie__release_year > movie._Movie__release_year).order_by(
+            asc(Movie._Movie__release_year)).first()
 
         if next is not None:
             result = next.release_year
@@ -188,8 +188,8 @@ class SqlAlchemyRepository(AbstractRepository):
             scm.commit()
 
     def get_genres(self) -> List[Genre]:
-        genres = self._session_cm.session.query(Genre).all()
-        return genres
+        genres_ = self._session_cm.session.query(Genre).all()
+        return genres_
 
     def add_review(self, review: Review):
         with self._session_cm as scm:

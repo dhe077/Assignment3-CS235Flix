@@ -16,11 +16,12 @@ def test_repository_can_add_a_user(session_factory):
     user = User('Dave', '123456789')
     repo.add_user(user)
 
-    user2 = User('Martin', '123456789')
-    repo.add_user(user2)
+    repo.add_user(User('Martin', '123456789'))
 
     user2 = repo.get_user('Dave')
 
+    print()
+    print(user, user2)
     assert user2 == user and user2 is user
 
 
@@ -40,7 +41,7 @@ def test_repository_can_add_movie(session_factory):
 
     new_movie_id = number_of_movies + 1
 
-    movie = Movie("Up", 2009, number_of_movies)
+    movie = Movie("Up", 2009, new_movie_id)
     repo.add_movie(movie)
 
     retrieved = repo.get_movie(new_movie_id)
@@ -75,7 +76,7 @@ def test_repository_can_retrieve_movie_by_year(session_factory):
 
     movies = repo.get_movies_by_year(2014)
 
-    # Check that the query returned 3 Articles.
+    # Check that the query returned 98 Articles.
     assert len(movies) == 98
 
     # these instructors are jokes...
@@ -223,4 +224,3 @@ def test_repository_can_retrieve_reviews(session_factory):
     repo.add_review(review)
 
     assert len(repo.get_reviews()) == 1
-

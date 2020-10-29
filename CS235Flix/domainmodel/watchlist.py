@@ -3,9 +3,11 @@ from CS235Flix.domainmodel.movie import Movie
 
 class WatchList:
 
-    def __init__(self):
+    def __init__(self, user):
+        from CS235Flix.domainmodel.user import User
         self.__movie_watchlist = []
         self.__index = 0
+        self.__user = user
 
     @property
     def movie_watchlist(self) -> list:
@@ -14,6 +16,14 @@ class WatchList:
     @movie_watchlist.setter
     def movie_watchlist(self, new_watchlist: list):
         self.__movie_watchlist = new_watchlist
+
+    @property
+    def user(self):
+        return self.__user
+
+    @user.setter
+    def user(self, new_user):
+        self.__user = new_user
 
     def __iter__(self):
         return self

@@ -44,10 +44,12 @@ movies = Table(
     Column('revenue', Float, nullable=True),
     Column('metascores', Integer, nullable=True),
 
-    Column('director_name', ForeignKey('directors.id')),
+    Column('director_name', ForeignKey('directors.id'))
+)
+"""    
     Column('actors_names', ForeignKey('actors.id')),
     Column('movie_genres', ForeignKey('genres.id'))
-)
+"""
 
 genres = Table(
     'genres', metadata,
@@ -98,10 +100,12 @@ def map_model_to_tables():
         '_Movie__revenue': movies.c.revenue,
         '_Movie__metascores': movies.c.metascores,
 
-        '_Movie__director': relationship(Director, backref='movies'),
+        '_Movie__director': relationship(Director, backref='movies')
+    })
+    """
         '_Movie__actors': relationship(Actor, backref='movies'),
         '_Movie__genres': relationship(Genre, backref='movies')
-    })
+    """
     mapper(Genre, genres, properties={
         '_Genre__genre_name': genres.c.genre_name
     })

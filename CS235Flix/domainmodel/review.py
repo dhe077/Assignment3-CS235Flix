@@ -5,7 +5,8 @@ from CS235Flix.domainmodel.movie import Movie
 
 class Review:
 
-    def __init__(self, movie: Movie, review_text: str, rating: int):
+    def __init__(self, movie: Movie, review_text: str, rating: int, user):
+        from CS235Flix.domainmodel.user import User
         if type(movie) == Movie:
             self.__movie = movie
         else:
@@ -19,6 +20,9 @@ class Review:
         else:
             self.__rating = None
         self.__timestamp = datetime.today()
+
+        self.__user: User = user
+        self.__movie.add_review(self)
 
     @property
     def movie(self) -> Movie:
@@ -51,6 +55,14 @@ class Review:
     @timestamp.setter
     def timestamp(self, new_timestamp):
         self.__timestamp = new_timestamp
+
+    @property
+    def user(self):
+        return self.__user
+
+    @user.setter
+    def user(self, new_user):
+        self.__user = new_user
 
     def __repr__(self):
         return f"<Review {self.__movie}, {self.__timestamp}>"

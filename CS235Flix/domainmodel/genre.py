@@ -2,6 +2,7 @@
 class Genre:
 
     def __init__(self, genre: str):
+        from CS235Flix.domainmodel.movie import Movie
         if genre == "" or type(genre) is not str:
             self.__genre_name = None
         else:
@@ -15,6 +16,10 @@ class Genre:
     @property
     def related_movies(self) -> list:
         return self.__related_movies
+
+    @related_movies.setter
+    def related_movies(self, new_movie_list):
+        self.__related_movies = new_movie_list
 
     def __repr__(self):
         return f"<Genre {self.__genre_name}>"
@@ -37,5 +42,4 @@ class Genre:
 
     def add_related_movie(self, movie):
         self.__related_movies.append(movie)
-
 

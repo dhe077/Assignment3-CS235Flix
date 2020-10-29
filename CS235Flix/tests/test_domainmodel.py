@@ -9,6 +9,12 @@ from CS235Flix.domainmodel.watchlist import WatchList
 from CS235Flix.domainmodel.genre import Genre
 from CS235Flix.domainmodel.user import User
 
+TEST_USER = User("Dave", "123456789")
+TEST_MOVIE = Movie("Up", 2009, 1)
+TEST_GENRE = Genre("New Zealand")
+TEST_ACTOR = Actor("Angelina Jolie")
+TEST_DIRECTOR = Director("Steven Spielberg")
+
 
 class TestActorMethods:
 
@@ -19,6 +25,11 @@ class TestActorMethods:
         print(actor2)
         actor3 = Actor(42)
         print(actor3)
+
+    def test_can_add_movie_acted_in(self):
+        TEST_ACTOR.add_movie_acted_in(TEST_MOVIE)
+
+        assert len(TEST_ACTOR.movies_acted_in) == 1
 
 
 class TestDirectorMethods:
@@ -59,7 +70,9 @@ class TestDirectorMethods:
         assert director1.__hash__() == hashed
 
     def test_adding_directed_movie(self):
-        pass
+        TEST_DIRECTOR.add_directed_movie(TEST_MOVIE)
+
+        assert len(TEST_DIRECTOR.directed_movies) == 1
 
 
 class TestReviewMethods:
@@ -68,16 +81,17 @@ class TestReviewMethods:
         movie = Movie("Moana", 2016, 1)
         review_text = "This movie was very enjoyable."
         rating = 8
-        review = Review(movie, review_text, rating)
+        review = Review(movie, review_text, rating, TEST_USER)
 
         print(review.movie)
         print("Review: {}".format(review.review_text))
         print("Rating: {}".format(review.rating))
+        print("Rating: {}".format(review.user))
 
         movie1 = ""
         review_text1 = ""
         rating1 = 0
-        review1 = Review(movie1, review_text1, rating1)
+        review1 = Review(movie1, review_text1, rating1, TEST_USER)
 
         assert review1.rating is None
         assert review1.review_text is None
@@ -88,7 +102,7 @@ class TestReviewMethods:
         movie = Movie("Moana", 2016, 1)
         review_text = "This movie was very enjoyable."
         rating = 8
-        review = Review(movie, review_text, rating)
+        review = Review(movie, review_text, rating, TEST_USER)
         print()
         print(review)
 
@@ -96,28 +110,28 @@ class TestReviewMethods:
         movie = Movie("Moana", 2016, 1)
         review_text = "This movie was very enjoyable."
         rating = 8
-        review = Review(movie, review_text, rating)
+        review = Review(movie, review_text, rating, TEST_USER)
         movie2 = Movie("Moana", 2016, 1)
         review_text2 = "This movie was very enjoyable."
         rating2 = 8
-        review2 = Review(movie2, review_text2, rating2)
+        review2 = Review(movie2, review_text2, rating2, TEST_USER)
         assert review == review2
         movie3 = Movie("Moana", 2017, 2)
         review_text3 = "This movie was very enjoyable."
         rating3 = 8
-        review3 = Review(movie3, review_text3, rating3)
+        review3 = Review(movie3, review_text3, rating3, TEST_USER)
         assert review != review3
         movie4 = Movie("", 0, -1)
         review_text4 = ""
         rating4 = 0
-        review4 = Review(movie4, review_text4, rating4)
+        review4 = Review(movie4, review_text4, rating4, TEST_USER)
         assert review != review4
 
     def test_getters_setters(self):
         movie = Movie("Moana", 2016, 1)
         review_text = "This movie was very enjoyable."
         rating = 8
-        review = Review(movie, review_text, rating)
+        review = Review(movie, review_text, rating, TEST_USER)
         assert review.rating == 8
         assert review.movie == movie
         assert review.review_text == "This movie was very enjoyable."
@@ -144,16 +158,21 @@ class TestGenreMethods:
         genre_list2.sort()
         assert genre_list2[0] == genre5 and genre_list2[1] == genre1
 
+    def test_adding_related_movie(self):
+        genre = Genre("Comedy")
+        genre.add_related_movie(TEST_MOVIE)
+        assert len(genre.related_movies) == 1
+
 
 class TestWatchlistMethods:
 
     def test_init(self):
-        watchlist = WatchList()
+        watchlist = WatchList(TEST_USER)
         print()
         print(f"Size of watchlist: {watchlist.size()}")
 
     def test_add_movie(self):
-        watchlist = WatchList()
+        watchlist = WatchList(TEST_USER)
         watchlist.add_movie(Movie("Moana", 2016, 1))
         watchlist.add_movie(Movie("Ice Age", 2002, 2))
         watchlist.add_movie(Movie("Guardians of the Galaxy", 2012, 3))
@@ -161,7 +180,7 @@ class TestWatchlistMethods:
         print(watchlist.first_movie_in_watchlist())
 
     def test_check_size_of_nonempty_watchlist(self):
-        watchlist = WatchList()
+        watchlist = WatchList(TEST_USER)
         watchlist.add_movie(Movie("Moana", 2016, 1))
         watchlist.add_movie(Movie("Ice Age", 2002, 2))
         watchlist.add_movie(Movie("Guardians of the Galaxy", 2012, 3))
@@ -169,28 +188,28 @@ class TestWatchlistMethods:
         print(f"Size of watchlist is: {watchlist.size()}")
 
     def test_add_same_movie_again(self):
-        watchlist = WatchList()
+        watchlist = WatchList(TEST_USER)
         watchlist.add_movie(Movie("Moana", 2016, 1))
         watchlist.add_movie(Movie("Moana", 2016, 2))
         print()
         print(f"Size of watchlist is: {watchlist.size()}")
 
     def test_remove_movie_which_is_not_in_watchlist(self):
-        watchlist = WatchList()
+        watchlist = WatchList(TEST_USER)
         watchlist.add_movie(Movie("Moana", 2016, 1))
         watchlist.remove_movie(Movie("Ice Age", 2002, 2))
         print()
         print(f"Size of watchlist is: {watchlist.size()}")
 
     def test_remove_movie_which_is_in_watchlist(self):
-        watchlist = WatchList()
+        watchlist = WatchList(TEST_USER)
         watchlist.add_movie(Movie("Moana", 2016, 1))
         watchlist.remove_movie(Movie("Moana", 2016, 2))
         print()
         print(f"Size of watchlist is: {watchlist.size()}")
 
     def test_select_movie_to_watch_index_ok(self):
-        watchlist = WatchList()
+        watchlist = WatchList(TEST_USER)
         watchlist.add_movie(Movie("Moana", 2016, 1))
         watchlist.add_movie(Movie("Ice Age", 2002, 2))
         watchlist.add_movie(Movie("Guardians of the Galaxy", 2012, 3))
@@ -198,7 +217,7 @@ class TestWatchlistMethods:
         print(f"Selected movie: {watchlist.select_movie_to_watch(0)}")
 
     def test_select_movie_to_watch_index_out_of_bounds(self):
-        watchlist = WatchList()
+        watchlist = WatchList(TEST_USER)
         watchlist.add_movie(Movie("Moana", 2016, 1))
         watchlist.add_movie(Movie("Ice Age", 2002, 2))
         watchlist.add_movie(Movie("Guardians of the Galaxy", 2012, 3))
@@ -206,7 +225,7 @@ class TestWatchlistMethods:
         print(f"Selected movie: {watchlist.select_movie_to_watch(9)}")
 
     def test_iterator_used(self):
-        watchlist = WatchList()
+        watchlist = WatchList(TEST_USER)
         watchlist.add_movie(Movie("Moana", 2016, 1))
         watchlist.add_movie(Movie("Ice Age", 2002, 2))
         watchlist.add_movie(Movie("Guardians of the Galaxy", 2012, 3))
@@ -258,7 +277,7 @@ class TestUserMethods:
     def test_add_review(self):
         user1 = User('Martin', 'pw12345')
         movie = Movie("Moana", 2016, 1)
-        user1.add_review(Review(movie, "Ahhh", 2))
+        user1.add_review(Review(movie, "Ahhh", 2, TEST_USER))
         print()
         print(user1.reviews)
         print(movie.external_rating)
@@ -358,3 +377,14 @@ class TestMovieMethods:
         assert movie == movie2
         movie3 = Movie("Moana", 2016, 8)
         assert movie != movie3
+
+    def test_can_add_review(self):
+        movie = Movie("Up", 2009, 8)
+        movie.add_review(Review(movie, "yes", 5, User("Dan", "123456789")))
+
+    def test_add_genre(self):
+        movie = Movie("Up", 2009, 8)
+        movie.add_genre(TEST_GENRE)
+
+        assert len(movie.genres) == 1
+        assert len(TEST_GENRE.related_movies) == 1

@@ -1,5 +1,6 @@
 from CS235Flix.domainmodel.movie import Movie
 from CS235Flix.domainmodel.review import Review
+from CS235Flix.domainmodel.watchlist import WatchList
 
 
 class User:
@@ -16,6 +17,8 @@ class User:
         self.__watched_movies = []
         self.__reviews = []
         self.__time_spent_watching_movies_minutes = 0
+
+        self.__watchlist = None
 
     @property
     def user_name(self) -> str:
@@ -58,6 +61,14 @@ class User:
         if new_time >= 0:
             self.__time_spent_watching_movies_minutes = new_time
 
+    @property
+    def watchlist(self):
+        return self.__watchlist
+
+    @watchlist.setter
+    def watchlist(self, new_watchlist):
+        self.__watchlist = new_watchlist
+
     def __repr__(self):
         return f"<User {self.__user_name}>"
 
@@ -87,3 +98,6 @@ class User:
 
     def user_getter(self):
         return self.__user_name
+
+    def add_to_watchlist(self, movie):
+        self.__watchlist.add_movie(movie)
