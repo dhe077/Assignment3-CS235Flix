@@ -21,6 +21,8 @@ from CS235Flix.domainmodel.user import User
 from CS235Flix.datafilereaders.movie_file_csv_reader import MovieFileCSVReader
 from CS235Flix.repositorydir.repository import AbstractRepository
 
+genres = None
+
 
 class SessionContextManager:
     def __init__(self, session_factory):
@@ -123,19 +125,20 @@ class SqlAlchemyRepository(AbstractRepository):
     def get_movie_ids_for_genre(self, genre_name: str):
         movie_ids = []
 
-        # Use native SQL to retrieve article ids, since there is no mapped class for the article_tags table.
-        row = self._session_cm.session.execute('SELECT id FROM genres WHERE genre_name = :genre_name', {'genre_name': genre_name}).fetchone()
+        # Use native SQL to retrieve movie ids, since there is no mapped class for the movie_genres table.
+        row = self._session_cm.session.execute('SELECT id FROM genres WHERE genre_name = :genre_name',
+                                               {'genre_name': genre_name}).fetchone()
 
         if row is None:
-            # No tag with the name tag_name - create an empty list.
+            # No genre with the name genre_name - create an empty list.
             movie_ids = list()
         else:
             genre_id = row[0]
 
-            # Retrieve article ids of articles associated with the tag.
+            # Retrieve article ids of movies associated with the genre.
             movie_ids = self._session_cm.session.execute(
-                    'SELECT movie_id FROM movie_genres WHERE genre_id = :genre_id ORDER BY movie_id ASC',
-                    {'genre_id': genre_id}
+                'SELECT movie_id FROM movie_genres WHERE genre_id = :genre_id ORDER BY movie_id ASC',
+                {'genre_id': genre_id}
             ).fetchall()
             movie_ids = [id[0] for id in movie_ids]
 
@@ -211,3 +214,103 @@ def populate(session_factory, data_path):
 
     session.commit()
 
+
+'''
+def get_movie_data(movie_file_reader):
+    movie_data = list()
+
+    for movie in movie_file_reader.dataset_of_movies:
+        data = (movie.ID, movie.title, movie.release_year)
+        movie_data.append(data)
+
+    return movie_data
+
+
+def get_genre_data(movie_file_reader):
+    genre_data = list()
+    genre_key = 0
+
+    for genre in movie_file_reader.dataset_of_genres:
+        genre_key += 1
+        data = (genre_key, genre.genre_name)
+        genre_data.append(data)
+
+    return genre_data
+
+
+def get_movie_and_genre_ids(movie_file_reader):
+    ids = list()
+    genre_key = 0
+
+    for movie in movie_file_reader.dataset_of_movies:
+        data = (movie.ID, genre_key)
+        ids.append(data)
+
+    return ids
+
+
+def generic_generator(filename, post_process=None):
+    with open(filename) as infile:
+        reader = csv.reader(infile)
+
+        # Read first line of the CSV file.
+        next(reader)
+
+        # Read remaining rows from the CSV file.
+        for row in reader:
+            # Strip any leading/trailing white space from data read.
+            row = [item.strip() for item in row]
+
+            if post_process is not None:
+                row = post_process(row)
+            yield row
+
+
+def process_user(user_row):
+    user_row[2] = generate_password_hash(user_row[2])
+    return user_row
+
+
+def populate(engine: Engine, data_path: str):
+    movie_file_reader = MovieFileCSVReader(data_path)
+    movie_file_reader.read_csv_file()
+
+    conn = engine.raw_connection()
+    cursor = conn.cursor()
+
+    global genres
+    genres = dict()
+
+    insert_movies = """
+            INSERT INTO movies (
+            ID, title, release_year)
+            VALUES (?, ?, ?)"""
+    cursor.executemany(insert_movies, get_movie_data(movie_file_reader))
+
+    insert_genres = """
+            INSERT INTO genres (
+            id, genre_name)
+            VALUES (?, ?)"""
+    cursor.executemany(insert_genres, get_genre_data(movie_file_reader))
+
+    insert_movie_genres = """
+            INSERT INTO movie_genres (
+            id, movie_id, genre_id)
+            VALUES (?, ?, ?)"""
+    cursor.executemany(insert_movie_genres, get_movie_and_genre_ids(movie_file_reader))
+
+    insert_users = """
+            INSERT INTO users (
+            id, username, password)
+            VALUES (?, ?, ?)"""
+    cursor.executemany(insert_users, generic_generator(os.path.join(data_path, 'users.csv'), process_user))
+
+    insert_review = """
+            INSERT INTO reviews (
+            id, movie_id, review_text, timestamp, rating)
+            VALUES (?, ?, ?, ?, ?)"""
+    cursor.executemany(insert_review, generic_generator(os.path.join(data_path, 'reviews.csv')))
+
+    conn.commit()
+    conn.close()
+'''

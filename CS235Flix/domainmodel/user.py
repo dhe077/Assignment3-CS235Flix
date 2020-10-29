@@ -62,12 +62,12 @@ class User:
         return f"<User {self.__user_name}>"
 
     def __eq__(self, other):
-        if self.user_name == other.user_name:
+        if self.__user_name == other.user_name:
             return True
         return False
 
     def __lt__(self, other):
-        if self.user_name < other.user_name:
+        if self.__user_name < other.user_name:
             return True
         return False
 

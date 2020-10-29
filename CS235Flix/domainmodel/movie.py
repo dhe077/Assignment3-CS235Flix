@@ -107,7 +107,7 @@ class Movie:
 
     @revenue.setter
     def revenue(self, new_revenue: float):
-        if new_revenue is float and new_revenue != "N/A":
+        if new_revenue != "N/A":
             if float(new_revenue) >= 0:
                 self.__revenue = float(new_revenue)
 
@@ -117,7 +117,7 @@ class Movie:
 
     @metascores.setter
     def metascores(self, new_metascores: int):
-        if new_metascores is int and new_metascores != "N/A":
+        if new_metascores != "N/A":
             if int(new_metascores) >= 0:
                 self.__metascores = int(new_metascores)
 

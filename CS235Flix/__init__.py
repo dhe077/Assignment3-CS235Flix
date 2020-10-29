@@ -59,7 +59,7 @@ def create_app(test_config=None):
             # Generate mappings that map domain model classes to the database tables.
             map_model_to_tables()
 
-            database_repository.populate(database_engine, data_path)
+            populate(database_engine, data_path)
 
         else:
             # Solely generate mappings that map domain model classes to the database tables.
@@ -68,7 +68,7 @@ def create_app(test_config=None):
         # Create the database session factory using sessionmaker (this has to be done once, in a global manner)
         session_factory = sessionmaker(autocommit=False, autoflush=True, bind=database_engine)
         # Create the SQLAlchemy DatabaseRepository instance for an sqlite3-based repository.
-        repo.repo_instance = database_repository.SqlAlchemyRepository(session_factory)
+        repo.repo_instance = SqlAlchemyRepository(session_factory)
 
     # Build the application - these steps require an application context.
     with app.app_context():
@@ -89,13 +89,13 @@ def create_app(test_config=None):
         # We reset the session inside the database repository before a new flask request is generated
         @app.before_request
         def before_flask_http_request_function():
-            if isinstance(repo.repo_instance, database_repository.SqlAlchemyRepository):
+            if isinstance(repo.repo_instance, SqlAlchemyRepository):
                 repo.repo_instance.reset_session()
 
         # Register a tear-down method that will be called after each request has been processed.
         @app.teardown_appcontext
         def shutdown_session(exception=None):
-            if isinstance(repo.repo_instance, database_repository.SqlAlchemyRepository):
+            if isinstance(repo.repo_instance, SqlAlchemyRepository):
                 repo.repo_instance.close_session()
 
     return app

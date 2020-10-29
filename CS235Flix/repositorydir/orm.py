@@ -18,7 +18,7 @@ users = Table(
     Column('id', Integer, primary_key=True, autoincrement=True),
     Column('user_name', String(255), unique=True, nullable=False),
     Column('password', String(255), nullable=False),
-    Column('time_spent_watching_movies_minutes', Integer)
+    Column('time_spent_watching_movies_minutes', Integer, nullable=True)
 )
 
 reviews = Table(
@@ -26,16 +26,16 @@ reviews = Table(
     Column('id', Integer, primary_key=True, autoincrement=True),
     Column('movie_id', ForeignKey('movies.id')),
     Column('review_text', String(1024), nullable=True),
-    Column('rating', Integer, nullable=False),
-    Column('timestamp', Date, nullable=False),
+    Column('rating', Integer, nullable=True),
+    Column('timestamp', Date, nullable=True),
     Column('user_id', Integer, ForeignKey('users.id'))
 )
 
 movies = Table(
     'movies', metadata,
     Column('id', Integer, primary_key=True),
-    Column('title', String(255), nullable=False),
-    Column('release_year', Integer, nullable=False),
+    Column('title', String(255), nullable=True),
+    Column('release_year', Integer, nullable=True),
     Column('description', String(1024), nullable=True),
 
     Column('runtime_minutes', Integer, nullable=True),
@@ -44,7 +44,9 @@ movies = Table(
     Column('revenue', Float, nullable=True),
     Column('metascores', Integer, nullable=True),
 
-    Column('director_id', ForeignKey('directors.id'), nullable=True)
+    Column('director_name', ForeignKey('directors.id')),
+    Column('actors_names', ForeignKey('actors.id')),
+    Column('movie_genres', ForeignKey('genres.id'))
 )
 
 genres = Table(
@@ -75,30 +77,37 @@ actors = Table(
 
 def map_model_to_tables():
     mapper(User, users, properties={
-        '__user_name': users.c.user_name,
-        '__password': users.c.password,
-        '__time_spent_watching_movies_minutes': users.c.time_spent_watching_movies_minutes,
-        '__reviews': relationship(Review, backref='users')
+        '_User__user_name': users.c.user_name,
+        '_User__password': users.c.password,
+        '_User__time_spent_watching_movies_minutes': users.c.time_spent_watching_movies_minutes,
+        '_User__reviews': relationship(Review, backref='users')
     })
     mapper(Review, reviews, properties={
-        '__review_text': reviews.c.review_text,
-        '__rating': reviews.c.rating,
-        '__timestamp': reviews.c.timestamp
+        '_Review__review_text': reviews.c.review_text,
+        '_Review__rating': reviews.c.rating,
+        '_Review__timestamp': reviews.c.timestamp
     })
     mapper(Movie, movies, properties={
-        'ID': movies.c.id,
-        '__title': movies.c.title,
-        'release_year': movies.c.release_year,
-        '__description': movies.c.description,
-        'runtime_minutes': movies.c.runtime_minutes,
+        '_Movie__ID': movies.c.id,
+        '_Movie__title': movies.c.title,
+        '_Movie__release_year': movies.c.release_year,
+        '_Movie__description': movies.c.description,
+        '_Movie__runtime_minutes': movies.c.runtime_minutes,
 
-        'external_rating': movies.c.external_rating,
-        'revenue': movies.c.revenue,
-        'metascores': movies.c.metascores
+        '_Movie__external_rating': movies.c.external_rating,
+        '_Movie__revenue': movies.c.revenue,
+        '_Movie__metascores': movies.c.metascores,
+
+        '_Movie__director': relationship(Director, backref='movies'),
+        '_Movie__actors': relationship(Actor, backref='movies'),
+        '_Movie__genres': relationship(Genre, backref='movies')
     })
     mapper(Genre, genres, properties={
-        '__genre_name': genres.c.genre_name
+        '_Genre__genre_name': genres.c.genre_name
     })
     mapper(Director, directors, properties={
-        '__director_full_name': directors.c.director_full_name
+        '_Director__director_full_name': directors.c.director_full_name
+    })
+    mapper(Actor, actors, properties={
+        '_Actor__actor_full_name': actors.c.actor_full_name
     })
