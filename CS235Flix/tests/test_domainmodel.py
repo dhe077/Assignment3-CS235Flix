@@ -225,6 +225,7 @@ class TestUserMethods:
         print(user1)
         print(user2)
         print(user3)
+        assert user1.user_name == 'Martin'
 
     def test_hash(self):
         user1 = User('Martin', 'pw12345')

@@ -43,18 +43,30 @@ class MovieFileCSVReader:
                 actors = row['Actors'].split(",")
                 genres = row['Genre'].split(",")
                 director = Director(row['Director'])
+                runtime = row['Runtime (Minutes)']
                 rating = row['Rating']
                 votes = row['Votes']
                 revenue = row['Revenue (Millions)']
                 metascore = row['Metascore']
 
                 movie = Movie(title, release_year, index + 1)
+                movie.title = title
+                movie.release_year = release_year
                 movie.director = director
                 # extension attribute application
+                movie.runtime_minutes = int(runtime)
                 movie.external_rating = rating
                 movie.rating_votes = votes
-                movie.revenue = revenue
-                movie.metascores = metascore
+
+                # nullable values
+                if revenue == 'N/A':
+                    movie.revenue = None
+                else:
+                    movie.revenue = revenue
+                if metascore == 'N/A':
+                    movie.metascores = None
+                else:
+                    movie.metascores = metascore
 
                 # adding the actors, genres, director and the movie to the corresponding datasets
                 for i in range(len(actors)):

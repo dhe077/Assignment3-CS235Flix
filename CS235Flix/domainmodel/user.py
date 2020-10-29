@@ -54,12 +54,12 @@ class User:
         return self.__time_spent_watching_movies_minutes
 
     @time_spent_watching_movies_minutes.setter
-    def time_spent_watching_movies(self, new_time: int):
+    def time_spent_watching_movies_minutes(self, new_time: int):
         if new_time >= 0:
             self.__time_spent_watching_movies_minutes = new_time
 
     def __repr__(self):
-        return f"<User {self.user_name}>"
+        return f"<User {self.__user_name}>"
 
     def __eq__(self, other):
         if self.user_name == other.user_name:
@@ -85,3 +85,5 @@ class User:
             self.__reviews.append(review)
         review.movie.add_rating_vote(review.rating)
 
+    def user_getter(self):
+        return self.__user_name
