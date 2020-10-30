@@ -13,7 +13,7 @@ TEST_DATA_PATH_MEMORY = os.path.join('C:', os.sep, 'Users', 'darry', 'Desktop', 
                                      'Assignment3', 'Assignment3-CS235Flix', 'CS235Flix', 'tests', 'datafiles')
 TEST_DATA_PATH_DATABASE = os.path.join('C:', os.sep, 'Users', 'darry', 'Desktop', '2020', 'Semester 2', 'COMPSCI 235', \
                                        'Assignment3', 'Assignment3-CS235Flix', 'CS235Flix', 'tests', 'datafiles')
-# C:\Users\darry\Desktop\2020\Semester 2\COMPSCI 235\Assignment3\Assignment3-CS235Flix\CS235Flix\tests\datafiles
+
 TEST_DATABASE_URI_IN_MEMORY = 'sqlite://'
 TEST_DATABASE_URI_FILE = 'sqlite:///CS235Flix-test.db'
 
@@ -25,14 +25,16 @@ def in_memory_repo():
     return repo
 
 
+@pytest.fixture
 def database_engine():
-    engine = create_engine(TEST_DATABASE_URI_FILE)
     clear_mappers()
+    engine = create_engine(TEST_DATABASE_URI_FILE)
     metadata.create_all(engine)  # Conditionally create database tables.
     for table in reversed(metadata.sorted_tables):  # Remove any data from the tables.
         engine.execute(table.delete())
     map_model_to_tables()
-    database_repository.populate(engine, TEST_DATA_PATH_DATABASE)
+    session_factory = sessionmaker(bind=engine)
+    database_repository.populate(session_factory, TEST_DATA_PATH_DATABASE)
     yield engine
     metadata.drop_all(engine)
     clear_mappers()

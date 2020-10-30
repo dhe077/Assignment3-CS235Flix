@@ -166,6 +166,7 @@ class Movie:
     def add_actor(self, actor: Actor):
         if actor not in self.__actors:
             self.__actors.append(actor)
+            actor.add_movie_acted_in(self)
 
     def remove_actor(self, actor: Actor):
         if actor in self.__actors:

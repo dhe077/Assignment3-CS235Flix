@@ -148,7 +148,7 @@ def test_repository_returns_movie_ids_for_existing_genre(session_factory):
 
     movie_ids = repo.get_movie_ids_for_genre("Music")
 
-    assert movie_ids == [1, 2]
+    assert movie_ids == [7, 7]
 
 
 def test_repository_returns_an_empty_list_for_non_existent_genre(session_factory):

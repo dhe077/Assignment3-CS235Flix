@@ -1,4 +1,4 @@
-id,movie-id,review-text,timestamp,rating
-1,1,Very Nice!,28/02/2020 14:31,8
-2,2,Eh,28/02/2020 14:39,1
-3,1,Exciting!,29/02/2020 8:12,7
+id,movie-info,review-text,rating,user-info
+1,"Guardians of the Galaxy, 2014, 1",Very Nice!,8,"Dave, 123456789"
+2,"Prometheus, 2012, 2",Eh,1,"Dave, 123456789"
+3,"Guardians of the Galaxy, 2014, 1",Exciting!,7,"Jimmy, 987654321"

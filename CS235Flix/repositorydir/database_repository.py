@@ -19,6 +19,8 @@ from CS235Flix.domainmodel.review import Review
 from CS235Flix.domainmodel.genre import Genre
 from CS235Flix.domainmodel.user import User
 from CS235Flix.datafilereaders.movie_file_csv_reader import MovieFileCSVReader
+from CS235Flix.datafilereaders.user_file_csv_reader import UserFileCSVReader
+from CS235Flix.datafilereaders.review_file_csv_reader import ReviewFileCSVReader
 from CS235Flix.repositorydir.repository import AbstractRepository
 
 genres = None
@@ -205,12 +207,24 @@ def populate(session_factory, data_path):
     movie_file_reader = MovieFileCSVReader(data_path)
     movie_file_reader.read_csv_file()
 
+    user_file_reader = UserFileCSVReader(data_path)
+    user_file_reader.read_csv_file()
+
+    review_file_reader = ReviewFileCSVReader(data_path)
+    review_file_reader.read_csv_file()
+
     session = session_factory()
     # This takes all movies from the csv file (represented as domain model objects) and adds them to the
     # database. If the uniqueness of directors, actors, genres is correctly handled, and the relationships
     # are correctly set up in the ORM mapper, then all associations will be dealt with as well!
     for movie in movie_file_reader.dataset_of_movies:
         session.add(movie)
+
+    for user in user_file_reader.dataset_of_users:
+        session.add(user)
+
+    for review in review_file_reader.dataset_of_reviews:
+        pass
 
     session.commit()
 
