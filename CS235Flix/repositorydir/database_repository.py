@@ -115,7 +115,7 @@ class SqlAlchemyRepository(AbstractRepository):
         return movie
 
     def get_last_movie(self):
-        movie = self._session_cm.session.query(Movie).order_by(desc(Movie.ID)).first()
+        movie = self._session_cm.session.query(Movie).order_by(desc(Movie._Movie__ID)).first()
         return movie
 
     def get_movies_by_id(self, id_list):
@@ -127,7 +127,7 @@ class SqlAlchemyRepository(AbstractRepository):
 
         # Use native SQL to retrieve movie ids, since there is no mapped class for the movie_genres table.
         row = self._session_cm.session.execute('SELECT id FROM genres WHERE genre_name = :genre_name',
-                                               {'_Genre__genre_name': genre_name}).fetchone()
+                                               {'genre_name': genre_name}).fetchone()
 
         if row is None:
             # No genre with the name genre_name - create an empty list.

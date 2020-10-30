@@ -388,3 +388,8 @@ class TestMovieMethods:
 
         assert len(movie.genres) == 1
         assert len(TEST_GENRE.related_movies) == 1
+
+    def test_has_genre(self):
+        TEST_MOVIE.add_genre(TEST_GENRE)
+
+        assert TEST_MOVIE.has_genre(TEST_GENRE)

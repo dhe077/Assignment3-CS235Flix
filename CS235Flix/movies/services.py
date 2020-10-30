@@ -95,6 +95,7 @@ def get_reviews_for_movie(movie_id, repo: AbstractRepository):
 # ============================================
 
 def movie_to_dict(movie: Movie):
+    print()
     movie_dict = {
         'ID': movie.ID,
         'release_year': movie.release_year,

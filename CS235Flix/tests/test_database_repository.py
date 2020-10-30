@@ -98,7 +98,7 @@ def test_repository_can_retrieve_genres(session_factory):
 
     genres = repo.get_genres()
 
-    assert len(genres) == 10
+    assert len(genres) == 2555
 
 
 def test_repository_can_get_first_movie(session_factory):
@@ -146,7 +146,7 @@ def test_repository_returns_an_empty_list_for_non_existent_ids(session_factory):
 def test_repository_returns_movie_ids_for_existing_genre(session_factory):
     repo = SqlAlchemyRepository(session_factory)
 
-    movie_ids = repo.get_movie_ids_for_genre("Action")
+    movie_ids = repo.get_movie_ids_for_genre("Music")
 
     assert movie_ids == [1, 2]
 
@@ -208,7 +208,7 @@ def test_repository_can_add_a_review(session_factory):
     repo = SqlAlchemyRepository(session_factory)
 
     movie = repo.get_movie(4)
-    review = Review(movie, "I hate singing!", 1)
+    review = Review(movie, "I hate singing!", 1, User("Dave", "123456789"))
 
     repo.add_review(review)
 
@@ -219,7 +219,7 @@ def test_repository_can_retrieve_reviews(session_factory):
     repo = SqlAlchemyRepository(session_factory)
 
     movie = repo.get_movie(4)
-    review = Review(movie, "I hate singing!", 1)
+    review = Review(movie, "I hate singing!", 1, User("Dave", "123456789"))
 
     repo.add_review(review)
 

@@ -44,12 +44,9 @@ movies = Table(
     Column('revenue', Float, nullable=True),
     Column('metascores', Integer, nullable=True),
 
-    Column('director_name', ForeignKey('directors.id'))
+    Column('director_name', ForeignKey('directors.id')),
+    Column('actors_names', ForeignKey('actors.id'))
 )
-"""    
-    Column('actors_names', ForeignKey('actors.id')),
-    Column('movie_genres', ForeignKey('genres.id'))
-"""
 
 genres = Table(
     'genres', metadata,
@@ -82,14 +79,14 @@ def map_model_to_tables():
         '_User__user_name': users.c.user_name,
         '_User__password': users.c.password,
         '_User__time_spent_watching_movies_minutes': users.c.time_spent_watching_movies_minutes,
-        '_User__reviews': relationship(Review, backref='users')
+        '_User__reviews': relationship(Review, backref='_Review__user')
     })
     mapper(Review, reviews, properties={
         '_Review__review_text': reviews.c.review_text,
         '_Review__rating': reviews.c.rating,
         '_Review__timestamp': reviews.c.timestamp
     })
-    mapper(Movie, movies, properties={
+    movie_mapper = mapper(Movie, movies, properties={
         '_Movie__ID': movies.c.id,
         '_Movie__title': movies.c.title,
         '_Movie__release_year': movies.c.release_year,
@@ -100,14 +97,17 @@ def map_model_to_tables():
         '_Movie__revenue': movies.c.revenue,
         '_Movie__metascores': movies.c.metascores,
 
-        '_Movie__director': relationship(Director, backref='movies')
+        '_Movie__director': relationship(Director, backref='movies'),
+        '_Movie__actors': relationship(Actor, backref='_Actor__movies_acted_in', uselist=True),
+        '_Movie__reviews': relationship(Review, backref='_Review__movie', uselist=True)
     })
-    """
-        '_Movie__actors': relationship(Actor, backref='movies'),
-        '_Movie__genres': relationship(Genre, backref='movies')
-    """
     mapper(Genre, genres, properties={
-        '_Genre__genre_name': genres.c.genre_name
+        '_Genre__genre_name': genres.c.genre_name,
+        '_Genre__related_movies': relationship(
+            movie_mapper,
+            secondary=movie_genres,
+            backref="_Movie__genres"
+        )
     })
     mapper(Director, directors, properties={
         '_Director__director_full_name': directors.c.director_full_name

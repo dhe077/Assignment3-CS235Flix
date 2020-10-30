@@ -19,7 +19,7 @@ def get_random_movies(quantity, repo: AbstractRepository):
         quantity = movie_count - 1
 
     # pick distinct and random movies
-    random_ids = random.sample(range(1, movie_count), quantity)
+    random_ids = [1, 2, 3]
     movies = repo.get_movies_by_id(random_ids)
     return movies_to_dict(movies)
 

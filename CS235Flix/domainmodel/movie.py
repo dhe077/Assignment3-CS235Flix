@@ -17,8 +17,8 @@ class Movie:
             self.__release_year = None
         self.__description: str = ""
         self.__director: Director = None
-        self.__actors: list = list()
-        self.__genres: list = list()
+        self.__actors = list()
+        self.__genres = list()
         self.__runtime_minutes: int = 0
 
         self.__external_rating = 0
@@ -139,7 +139,13 @@ class Movie:
     def release_year(self, new_release_year: int):
         self.__release_year = new_release_year
 
-    # add external rating, rating votes, revenue and meta scores as extra
+    @property
+    def reviews(self):
+        return self.__reviews
+
+    @reviews.setter
+    def reviews(self, new_review_list):
+        self.__reviews = new_review_list
 
     def __repr__(self) -> str:
         return f"<Movie {self.__title}, {self.__release_year}>"
@@ -177,3 +183,8 @@ class Movie:
 
     def add_review(self, review):
         self.__reviews.append(review)
+
+    def has_genre(self, genre):
+        if genre in self.__genres:
+            return True
+        return False

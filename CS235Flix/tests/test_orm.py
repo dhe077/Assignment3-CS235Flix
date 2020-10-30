@@ -66,7 +66,7 @@ def insert_reviewed_movie(empty_session):
     timestamp_2 = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
     empty_session.execute(
-        'INSERT INTO reviews (user_id, movie_id, review, timestamp) VALUES '
+        'INSERT INTO reviews (user_id, movie_id, review_text, timestamp) VALUES '
         '(:user_id, :movie_ID, "review 1", :timestamp_1),'
         '(:user_id, :movie_ID, "review 2", :timestamp_2)',
         {'user_id': user_key, 'movie_ID': movie_key, 'timestamp_1': timestamp_1, 'timestamp_2': timestamp_2}
@@ -138,7 +138,6 @@ def test_loading_of_movie(empty_session):
     assert movie_key == fetched_movie.ID
 
 
-'''
 def test_loading_of_movie_with_genres(empty_session):
     movie_key = insert_movie(empty_session)
     genre_keys = insert_genres(empty_session)
@@ -173,7 +172,7 @@ def test_saving_of_review(empty_session):
 
     # Create a new review that is bidirectionally linked with the User and movie.
     review_text = "Some review text."
-    review = Review(movie, review_text, 2)
+    review = Review(movie, review_text, 2, user)
 
     # Note: if the bidirectional links between the new review and the User and
     # movie objects hadn't been established in memory, they would exist following
@@ -181,10 +180,9 @@ def test_saving_of_review(empty_session):
     empty_session.add(review)
     empty_session.commit()
 
-    rows = list(empty_session.execute('SELECT user_id, movie_id, review FROM reviews'))
+    rows = list(empty_session.execute('SELECT user_id, movie_id, review_text FROM reviews'))
 
     assert rows == [(user_key, movie_key, review_text)]
-'''
 
 
 def test_saving_of_movie(empty_session):
@@ -201,7 +199,7 @@ def test_saving_genre_movie(empty_session):
     genre = make_genre()
 
     # Establish the bidirectional relationship between the movie and the genre.
-    make_genre_association(movie, genre)
+    movie.add_genre(genre)
 
     # Persist the movie (and genre).
     # Note: it doesn't matter whether we add the genre or the movie. They are connected
@@ -214,9 +212,9 @@ def test_saving_genre_movie(empty_session):
     movie_key = rows[0][0]
 
     # Check that the genres table has a new record.
-    rows = list(empty_session.execute('SELECT id, name FROM genres'))
+    rows = list(empty_session.execute('SELECT id, genre_name FROM genres'))
     genre_key = rows[0][0]
-    assert rows[0][1] == "News"
+    assert rows[0][1] == "New Zealand"
 
     # Check that the movie_genres table has a new record.
     rows = list(empty_session.execute('SELECT movie_id, genre_id from movie_genres'))
@@ -250,5 +248,5 @@ def test_save_reviewed_movie(empty_session):
 
     # Check that the reviews table has a new record that links to the movies and users
     # tables.
-    rows = list(empty_session.execute('SELECT user_id, movie_id, review FROM reviews'))
+    rows = list(empty_session.execute('SELECT user_id, movie_id, review_text FROM reviews'))
     assert rows == [(user_key, movie_key, review_text)]
